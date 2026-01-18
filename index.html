@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langkah Baru - Harapan</title>
+    <style>
+        /* Dasar Tampilan */
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* 1. Latar Belakang Hujan Teks */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .falling-text {
+            position: absolute;
+            top: -250px;
+            color: #4CAF50; /* Hijau Segar */
+            font-size: 14px;
+            font-weight: bold;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
+            opacity: 0.15;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(110vh); }
+        }
+
+        /* 2. Konten Utama */
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+        }
+
+        .slide-container {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .quote-text {
+            font-size: 2.2rem;
+            font-weight: 300;
+            margin-bottom: 40px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            min-height: 150px;
+            line-height: 1.4;
+        }
+
+        /* Gaya Khusus Pesan Penutup */
+        .final-message {
+            display: block;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 10px #4CAF50, 0 0 20px #4CAF50;
+            animation: glow 1.5s infinite alternate;
+            font-size: 2.5rem;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #4CAF50, 0 0 20px #4CAF50; transform: scale(1); }
+            to { text-shadow: 0 0 20px #81c784, 0 0-40px #4CAF50; transform: scale(1.02); }
+        }
+
+        /* Tombol */
+        .btn-next {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .btn-next:hover {
+            background-color: #66bb6a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(76, 175, 80, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="matrix"></div>
+
+    <div class="content-overlay">
+        <div class="slide-container">
+            <div class="quote-text" id="quote">
+                "Setiap napas yang lebih bersih adalah hadiah terbaik untuk masa depanmu."
+            </div>
+            <button class="btn-next" id="mainBtn" onclick="nextQuote()">Pesan Berikutnya</button>
+        </div>
+    </div>
+
+<script>
+    // --- LOGIKA HUJAN TEKS ---
+    const matrixContainer = document.getElementById('matrix');
+    const rainMessage = "PILIH NAPASMU PILIH MASA DEPANMU ";
+    
+    function createRain() {
+        const screenWidth = window.innerWidth;
+        const columnCount = Math.floor(screenWidth / 50);
+
+        for (let i = 0; i < columnCount; i++) {
+            const span = document.createElement('span');
+            span.className = 'falling-text';
+            span.innerText = rainMessage.repeat(5); // Mengulang teks agar panjang ke bawah
+            span.style.left = (i * 50) + "px";
+            
+            const duration = Math.random() * 7 + 5; 
+            const delay = Math.random() * 5;
+            
+            span.style.animationDuration = duration + 's';
+            span.style.animationDelay = '-' + delay + 's';
+            
+            matrixContainer.appendChild(span);
+        }
+    }
+    createRain();
+
+    // --- LOGIKA SLIDE KATA-KATA ---
+    const quotes = [
+        "Setiap napas yang lebih bersih adalah hadiah terbaik untuk masa depanmu.",
+        "Sayangi dirimu, sayangi paru-parumu. Kamu sangat berharga.",
+        "Mulai hari ini, pilih udara segar untuk hidup yang lebih bugar.",
+        "Langkah kecil hari ini akan menjadi kemenangan besar di masa depan."
+    ];
+
+    let currentIndex = 0;
+
+    function nextQuote() {
+        const quoteElement = document.getElementById("quote");
+        const btn = document.getElementById("mainBtn");
+        
+        currentIndex++;
+
+        if (currentIndex < quotes.length) {
+            // Ganti ke slide berikutnya
+            quoteElement.style.opacity = 0;
+            setTimeout(() => {
+                quoteElement.innerText = `"${quotes[currentIndex]}"`;
+                quoteElement.style.opacity = 1;
+            }, 400);
+        } 
+        else if (currentIndex === quotes.length) {
+            // BAGIAN PENUTUP
+            quoteElement.style.opacity = 0;
+            setTimeout(() => {
+                quoteElement.innerHTML = `<span class="final-message">DI SETIAP SUDUT SEPI ADA SUARA BATUK YANG SELALU TER NGIANG NGIANG DI KEPALA  ANAK  KECIL INI DAN SELALU MEMBAWA KETAKUTAN KETIKA MELANGKAH MAJU.</span>`;
+                quoteElement.style.opacity = 1;
+                btn.innerText = "Ulangi Perjalanan";
+            }, 400);
+        } 
+        else {
+            // Reset ke awal
+            currentIndex = 0;
+            quoteElement.style.opacity = 0;
+            setTimeout(() => {
+                quoteElement.innerText = `"${quotes[currentIndex]}"`;
+                quoteElement.style.opacity = 1;
+                btn.innerText = "Pesan Berikutnya";
+            }, 400);
+        }
+    }
+</script>
+
+</body>
+</html>
